@@ -29,6 +29,9 @@ function delete(){
 	pid=$1
 	curl -k -H "Content-Type: application/json" -X PUT --data-binary @tmp.json http://127.0.0.1:8001/api/v1/namespaces/$ns/finalize
 	kill -9 $pid
+
+	# Delete temp file
+	rm tmp.json
 }
 
 delete
