@@ -1,0 +1,20 @@
+deployment:
+  args:
+    - --provider=rfc2136
+    - --rfc2136-host={{dns_host_domain_name}}
+    - --rfc2136-port=53
+    - --rfc2136-zone={{domain_name}}
+    - --rfc2136-gss-tsig
+    - --rfc2136-kerberos-realm={{domain_name}}
+    - --rfc2136-kerberos-username={{kerberos-username}}
+    - --rfc2136-kerberos-password={{kerberos-password}}
+    - --rfc2136-tsig-axfr
+    - --source=service
+    - --source=ingress
+    - --source=contour-httpproxy
+    - --domain-filter={{domain_name}}
+    - --txt-owner-id=cluster-id
+    - --txt-prefix=external-dns-
+    - --registry=txt
+    - --policy=sync
+

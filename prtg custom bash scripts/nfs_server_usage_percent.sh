@@ -1,7 +1,7 @@
 #!/bin/bash
 
+# Writer: Daniel Mandelblat
 # filename: get_pvc_usage.sh
-# author:  daniel.mandelblat1@hp.com
 # create date: 09/01/2024
 # description: Get desired fodler and print each folder percentage
 

@@ -1,6 +1,7 @@
 #!/bin/bash
+
+# Writer: Daniel Mandelblat
 # filename: check_prtg_free_bytes.sh
-# author: DM daniel.mandelblat1@hp.com
 # create date: 02/04/2024
 # description: a PRTG check that displays free bytes, for various filesystems, ignoring tmpfs, devtmpfs, squashfs. PRTG prefers XML as its output machanism.
 

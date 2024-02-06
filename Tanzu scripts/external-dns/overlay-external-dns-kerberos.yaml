@@ -1,0 +1,59 @@
+#@ load("@ytt:overlay", "overlay")
+
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata":{"name":"external-dns"}}),expects=1
+---
+spec:
+  template:
+    spec:
+      containers:
+        #@overlay/match by="name"
+        - name: external-dns
+          #@overlay/match missing_ok=True
+          volumeMounts:
+            #@overlay/append
+            - mountPath: /etc/krb5.conf
+              name: kerberos-config-volume
+              subPath: krb5.conf
+              readOnly: true
+      #@overlay/match missing_ok=True
+      volumes:
+        #@overlay/append
+        - name: kerberos-config-volume
+          configMap:
+            defaultMode: 420
+            name: krb5.conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: krb5.conf
+  namespace: tanzu-system-service-discovery
+data:
+  krb5.conf: |
+    [logging]
+    default = FILE:/var/log/krb5libs.log
+    kdc = FILE:/var/log/krb5kdc.log
+    admin_server = FILE:/var/log/kadmind.log
+
+    [libdefaults]
+    dns_lookup_realm = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+    rdns = false
+    pkinit_anchors = /etc/pki/tls/certs/ca-bundle.crt
+    default_ccache_name = KEYRING:persistent:%{uid}
+
+    default_realm = {{domain_name_upper_case}}
+    udp_preference_limit = 1
+
+    [realms]
+    {{domain_name_upper_case}} = {
+      kdc = {{dns_host_1}}
+      kdc = {{dns_host_2}}
+      admin_server = {{dns_host_1}}
+      default_domain = {{domain_name}}
+    }
+    [domain_realm]
+    .{{domain_name_lower_case}}={{domain_name_upper_case}}
+    {{domain_name_lower_case}}={{domain_name_upper_case}}
