@@ -72,7 +72,7 @@ function kick(){
 }
 
 
-# Check id there is an old version?
+# Check if there is an old version?
 results=$(tanzu package installed  list -A | grep $package_name | wc -l)
 
 if [[ "$results" -gt "0" ]] && [[ $redeploy == true ]]
