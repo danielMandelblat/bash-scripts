@@ -2,7 +2,8 @@
 
 # Writer: Daniel Mandelblat
 # Date: 05/03/2024
-# Descrption: This script will update Vcenter thumbprint on all the clusters that existed in the kubeconfig file
+# Descrption: This script updating the Tanzu cluster thumbprint to the new one.
+# Example:  script.sh <vcenter_url> <cluster>, script.sh vcenter.net devops-cls
 
 set -eE
 
