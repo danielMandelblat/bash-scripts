@@ -48,7 +48,22 @@ class VMToolsExecuter:
 
       return self
 
-  def script_on_vm(self, vm_name: str, script: str, wait=True, throw_error: bool = True, username: str = None, password: str = None, timeout: int = 3600):
+  def script_on_vm(
+          self,
+          vm_name: str,
+          script: str,
+          wait=True,
+          throw_error: bool = True,
+          username: str = None,
+          password: str = None,
+          timeout: int = 3600,
+          platform: str = 'auto'
+  ):
+
+      # Validate platform type
+      valid_platforms = ['windows', 'linux', 'auto']
+      if platform not in valid_platforms:
+          raise Exception(f"Platform type ({platform}) is not valid, please select: {valid_platforms}")
 
       # Validate credentials is existed
       if (username != None) and (password != None):
@@ -76,6 +91,16 @@ class VMToolsExecuter:
       if vm == None and throw_error:
           raise Exception(f"Virtual machine named {vm_name} is not existed!")
 
+      # Check platform type?
+      platform_by_vmtools =  vm.guest.guestFullName.lower()
+      if platform == 'auto':
+          if 'linux' in platform_by_vmtools:
+              platform = 'linux'
+          elif 'windows' in platform_by_vmtools:
+              platform = 'windows'
+          else:
+              raise Exception(f"Failed to get machine ({vm_name}) OS platform, result was: {platform_by_vmtools}")
+
       # Check if VMware Tools is running
       if vm.guest.toolsRunningStatus != 'guestToolsRunning':
           if throw_error:
@@ -84,9 +109,15 @@ class VMToolsExecuter:
               return None
 
       # Create a ProgramSpec object
-      program_spec = vim.vm.guest.ProcessManager.ProgramSpec()
-      program_spec.programPath = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-      program_spec.arguments = f'-Command "{script}"'
+      if platform == 'windows':
+          program_spec = vim.vm.guest.ProcessManager.ProgramSpec()
+          program_spec.programPath = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+          program_spec.arguments = f'-Command "{script}"'
+      else:
+          # Create a ProgramSpec object
+          program_spec = vim.vm.guest.ProcessManager.ProgramSpec()
+          program_spec.programPath = "/bin/bash"
+          program_spec.arguments = f"-c '{script}'"
 
       # Get the guest credentials
       guest_auth = vim.vm.guest.NamePasswordAuthentication(
@@ -156,7 +187,6 @@ class VMToolsExecuter:
 
 
 
-
 if __name__ == "__main__":
     #  Install the Required Python Packages
     # pip install pyvmomi pywinrm
@@ -173,6 +203,8 @@ if __name__ == "__main__":
 
     session = VMToolsExecuter(server, username, password)
 
-    res = session.script_on_vm(vm, username=guest_username, password=guest_password, script='hostname')
+    res = session.script_on_vm(vm, username=guest_username, password=guest_password, script='hostname', platform='windows') # platform = ['auto', 'windows', 'linux']
 
     print(res)
+  
+    session.disconnect()
