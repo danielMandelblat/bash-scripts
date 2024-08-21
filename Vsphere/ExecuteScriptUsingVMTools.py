@@ -84,7 +84,7 @@ class VMToolsExecuter:
 
       # Validate VM object is existed!
       for curr_vmn in self.get_vms():
-          if vm_name.lower().strip() in curr_vmn.name.lower().strip():
+          if vm_name.lower().strip() == curr_vmn.name.lower().strip():
               vm = curr_vmn
               break
 
