@@ -7,7 +7,7 @@
 # you can use this script to generate a BASH script that can restore on the destination cluster - by copy and paste generated BASH script.
 
 # get  storage location
-velero_data="$(kubectl get -n velero backupstoragelocations.velero.io -ojson | jq -r '.items[] | select(.status.phase | contains("Available"))')"
+velero_data="$(kubectl get -n velero backupstoragelocations.velero.io -ojson | jq -r '.items[] | select(.status.phase | contains("Available"))' | jq -cs '.[0]')"
 velero_data_prefix="$(echo $velero_data | jq -r '.spec.objectStorage.prefix')"
 velero_data_bucket="$(echo $velero_data | jq -r '.spec.objectStorage.bucket')"
 velero_data_server="$(echo $velero_data | jq -r '.spec.config.s3Url')"
