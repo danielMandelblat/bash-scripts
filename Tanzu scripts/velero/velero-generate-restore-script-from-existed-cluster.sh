@@ -18,8 +18,7 @@ velero_data_cred_username="$(echo $velero_data | jq -r '.spec.credential.name')"
 velero_cred_encoded="$(eval "kubectl -n velero get secret $velero_data_cred_name -ojson | jq -r '.data.$velero_data_cred_key'" | base64 -d)"
 velero_cred_encoded_username="$(echo $velero_cred_encoded | awk '{print $2}' | cut -d "=" -f 2)"
 velero_cred_encoded_password="$(echo $velero_cred_encoded | awk '{print $3}' | cut -d "=" -f 2)"
-last_backup="$(velero backup get | tail -n 1 | awk '{print $1}')"
-echo -e "\n\n\n"
+last_backup="$(velero backup get | grep -v Deleting | tail -n 1 | awk '{print $1}')"
 
 cat <<EOF
 echo "# Copy and paste the below code on the source cluster"
