@@ -22,13 +22,23 @@ last_backup="$(velero backup get | grep -v  -w "Failed" | grep -v "Deleting" | h
 
 cat <<EOF
 echo "# Copy and paste the below code on the source cluster"
-sudo apt update
-sudo apt install jq -y
+
+# Install jq 
+if ! command -v jq
+then
+	sudo apt update -y
+	sudo apt install jq -y
+fi
+
 # Install Velero
-wget https://github.com/vmware-tanzu/velero/releases/download/v1.14.1/velero-v1.14.1-linux-amd64.tar.gz
-tar -xvf velero-v1.14.1-linux-amd64.tar.gz
-sudo mv velero-v1.14.1-linux-amd64/velero /usr/local/bin/
-velero version
+if ! command -v velero
+then
+	wget https://github.com/vmware-tanzu/velero/releases/download/v1.14.1/velero-v1.14.1-linux-amd64.tar.gz
+	tar -xvf velero-v1.14.1-linux-amd64.tar.gz
+	sudo mv velero-v1.14.1-linux-amd64/velero /usr/local/bin/
+	velero version
+fi
+
 echo -e "[default]\naws_access_key_id=$velero_cred_encoded_username\naws_secret_access_key=$velero_cred_encoded_password" > credentials-velero
 velero install \
   --provider aws \
@@ -43,5 +53,7 @@ velero install \
   --namespace velero \
   --prefix $velero_data_prefix\
   --backup-location-config region=$velero_data_region,s3ForcePathStyle="true",s3Url=$velero_data_server
-velero restore create $last_backup --from-backup $last_backup --wait
+
+# velero restore create $last_backup --from-backup $last_backup --wait
 EOF
+
