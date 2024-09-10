@@ -1,4 +1,10 @@
 #!/bin/bash
+# define credentials
+user="minio"
+pass="minio"
+
+# Create new alias
+mc alias set local_minio http://127.0.0.1:9000 $user $pass
 
 # Set your MinIO alias for the local MinIO instance
 LOCAL_ALIAS="local_minio"   # The alias for your local MinIO
