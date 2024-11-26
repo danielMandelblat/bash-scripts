@@ -33,7 +33,11 @@ function unseal(){
 echo "Vault HA mode setup is begin..."
 
 # Deploy the Helm Charr
-helm upgrade --install -n $namespace vault vault/
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm search repo hashicorp/vault
+helm install vault hashicorp/vault \
+  --set='server.ha.enabled=true' \
+  --set='server.ha.raft.enabled=true'
 
 # Wait to the pod be up
 while true
