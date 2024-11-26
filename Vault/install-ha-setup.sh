@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script Name: automate_vault_ha_cluster.sh
+# Script Name: install-ha-setup.sh
 # Description: Automates the creation of a HashiCorp Vault High-Availability (HA) cluster.
 #               This script provisions the necessary resources, configures Vault nodes,
 #               sets up backend storage (e.g., Consul), and ensures HA failover readiness.
