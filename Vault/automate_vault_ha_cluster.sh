@@ -65,7 +65,7 @@ function unseal(){
 	index=$1
 	cat cluster-keys.json  | jq -r '.unseal_keys_b64[]'  | while read line
 	do
-        	execute_master "vault operator unseal ${line}"
+        	execute "kubectl exec -n ${namespace} vault-${index} -- vault operator unseal ${line}"
 	done
 }
 
