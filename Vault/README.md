@@ -63,3 +63,68 @@ The script can be executed in various modes using the `setup` argument:
 1. **Full Deployment and Configuration**:
    ```bash
    ./automate_vault_ha_cluster.sh
+   ```
+
+2. **Configuration Only**:
+   ```bash
+   ./automate_vault_ha_cluster.sh --config-only
+   ```
+
+3. **Unseal Vault Cluster**:
+   ```bash
+   ./automate_vault_ha_cluster.sh unseal
+   ```
+
+4. **Configure Access Methods**:
+   ```bash
+   ./automate_vault_ha_cluster.sh access_config
+   ```
+
+## Key Functionalities
+
+### 1. Initialization and Unsealing
+- Initializes the Vault cluster and generates unseal keys and a root token.
+- Unseals all Vault nodes in the cluster.
+
+### 2. Authentication Methods
+- Configures LDAP settings for user authentication.
+- Enables Kubernetes authentication for service accounts.
+- Creates local admin and backup users with predefined policies.
+
+### 3. Policies
+- **Admin Policy**: Grants full access to all paths.
+- **Read Policy**: Grants read-only access to all paths.
+
+### 4. Backup Cron Job
+- Stores the Vault root token securely in a Kubernetes secret.
+- Sets up a cron job to manage periodic backups.
+
+### 5. Logging and Debugging
+The script logs all executed commands and outputs to aid troubleshooting.
+
+## Output
+At the end of execution, the script prints:
+- The root token for Vault UI access.
+- The ingress URL to access Vault.
+
+Example:
+```plaintext
+====== Process has been finished ======
+Please login to UI [ http://vault.k8s-services.site.net/ ] with this token: <root_token>
+```
+
+## Troubleshooting
+1. **Vault Pods Not Running**:
+   - Check resource availability in the Kubernetes cluster.
+   - Inspect pod logs using `kubectl logs -n vault <pod-name>`.
+2. **Unseal Keys Missing**:
+   - Verify that the `cluster-keys.json` file is generated and accessible.
+3. **LDAP Configuration Issues**:
+   - Validate LDAP server connectivity and credentials.
+4. **Kubernetes Role Binding Errors**:
+   - Ensure the service accounts exist in the specified namespaces.
+
+## Author
+**Daniel Mandelblat**  
+Email: danielmande@gmail.com  
+Date: 2024-12-16
