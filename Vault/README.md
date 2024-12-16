@@ -1,67 +1,65 @@
-Here is a sample README file for your script:  
+# README: Automate Vault HA Cluster
 
----
+## Overview
+The `automate_vault_ha_cluster.sh` script automates the deployment and configuration of a HashiCorp Vault High-Availability (HA) cluster. It simplifies the provisioning of resources, Vault initialization, backend storage setup (e.g., Raft), and ensures readiness for HA failover in a Kubernetes environment.
 
-# Vault HA Cluster Automation Script  
+This script is designed to handle Vault installation, unsealing, access configuration (e.g., LDAP, Kubernetes), and the creation of local users and policies.
 
-### **Description**  
-This script automates the deployment and setup of a Vault High Availability (HA) cluster using the Raft integrated storage backend. It simplifies the initialization, unsealing, and configuration of Vault in a Kubernetes environment.  
+## Features
+- Automated deployment of Vault via Helm.
+- Initialization and unsealing of Vault nodes.
+- Configures LDAP for authentication.
+- Enables Kubernetes authentication for service accounts.
+- Creates local admin and backup users with specific policies.
+- Automatically sets up backup cron jobs for Vault tokens.
+- Prints the root token and ingress URL for Vault UI access.
 
----
+## Prerequisites
+1. **Kubernetes Cluster**:
+   - A running Kubernetes cluster with `kubectl` configured.
+2. **Helm**:
+   - Helm must be installed to deploy the Vault Helm chart.
+3. **Dependencies**:
+   - jq (for JSON parsing)
+   - Vault CLI
+4. **LDAP**:
+   - An accessible LDAP or Active Directory server.
+5. **Namespace**:
+   - Ensure the namespace (`vault` by default) exists or will be created during script execution.
+6. **Permissions**:
+   - Admin-level permissions on the Kubernetes cluster.
 
-### **Features**  
-- Deploys Vault in HA mode with multiple replicas.  
-- Initializes the Vault cluster and unseals the primary node.  
-- Joins secondary nodes to the Raft cluster.  
-- Verifies the cluster status.  
+## Script Variables
 
----
+| Variable                     | Description                                      |
+|------------------------------|--------------------------------------------------|
+| `namespace`                  | Kubernetes namespace where Vault will be deployed (default: `vault`). |
+| `ingress_url`                | URL for Vault UI access.                         |
+| `default_admin`              | Username for the default admin user.             |
+| `default_admin_password`     | Password for the default admin user.             |
+| `default_backup_user`        | Username for the backup user.                    |
+| `default_backup_user_password` | Password for the backup user.                  |
+| `ldap_bind_user`             | LDAP bind user for authentication.               |
+| `ldap_bind_user_password`    | LDAP bind user password.                         |
+| `ldap_server`                | LDAP server URL.                                 |
+| `ldap_user_dn`               | LDAP user distinguished name.                    |
+| `ldap_group_dn`              | LDAP group distinguished name.                   |
+| `roles`                      | Kubernetes service account mappings to namespaces. |
 
-### **Prerequisites**  
-1. A Kubernetes cluster with Helm installed.  
-2. Vault Helm chart installed and configured.  
-3. Kubectl access to the cluster.  
-4. Sufficient permissions to manage Vault resources.  
+## Usage
 
----
+### Script Execution Modes
+The script can be executed in various modes using the `setup` argument:
 
-### **Usage**  
+| Mode                | Description                                      |
+|---------------------|--------------------------------------------------|
+| (No argument)       | Installs Vault using Helm and performs full configuration. |
+| `--config-only`     | Configures an already installed Vault cluster.   |
+| `unseal`            | Unseals all Vault nodes in the cluster.          |
+| `access_config`     | Configures authentication methods (LDAP, Kubernetes, etc.). |
 
-1. **Clone the Repository**  
-   ```bash  
-   git clone <repository-url>  
-   cd <repository-directory>  
-   ```  
+### Example Commands
 
-2. **Edit Configuration**  
-   Ensure the `values.yaml` file for the Vault Helm chart is correctly configured for HA mode with Raft.  
-
-3. **Run the Script**  
-   ```bash  
-   ./vault-ha-setup.sh  
-   ```  
-
-4. **Verify Cluster Status**  
-   After running the script, check the status of the Vault cluster:  
-   ```bash  
-   vault operator raft list-peers  
-   ```  
-
----
-
-### **File Structure**  
-- `vault-ha-setup.sh`: The main script for automating the Vault HA cluster setup.  
-
----
-
-### **Author**  
-Daniel Mandelblat  
-
----
-
-### **Last Updated**  
-November 26, 2024  
-
----
-
-If you'd like any additional sections or edits, let me know!
+1. **Full Deployment and Configuration**:
+   ```bash
+   ./automate_vault_ha_cluster.sh
