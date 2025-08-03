@@ -57,7 +57,8 @@ for ip in "${ipaddress[@]}"; do
         ipaddress_namespace="$(echo "$ipaddress_object" | jq -r '.metadata.namespace')"
 
         # Print the delete command
-        echo "kubectl delete ipaddresses.ipam.metal3.io -n $ipaddress_namespace $ipaddress_name"
+        delete_cmd="kubectl delete ipaddresses.ipam.metal3.io -n $ipaddress_namespace $ipaddress_name"
+        eval $delete_cmd
     fi
 done
 
