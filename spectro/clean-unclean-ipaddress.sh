@@ -12,9 +12,14 @@
 ###############################################################################
 
 # Get the API server's VIP (without port)
-vip="$(kubectl get kubeadmconfig -A -o json \
-      | jq -r '.items[0].spec.joinConfiguration.discovery.bootstrapToken.apiServerEndpoint' \
-      | awk -F ":" '{print $1}')"
+vip=$(kubectl get kubeadmconfig -A -o json \
+  | jq -r '[.items[] | {endpoint: .spec.joinConfiguration.discovery.bootstrapToken.apiServerEndpoint, timestamp: .metadata.creationTimestamp}] 
+  | sort_by(.timestamp) 
+  | last 
+  | .endpoint' \
+  | awk -F ":" '{print $1}'
+)
+
 
 # Get all IP addresses from IPAM
 readarray -t ipaddress < <(
