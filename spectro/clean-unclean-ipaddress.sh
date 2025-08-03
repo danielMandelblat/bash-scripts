@@ -60,3 +60,10 @@ for ip in "${ipaddress[@]}"; do
         echo "kubectl delete ipaddresses.ipam.metal3.io -n $ipaddress_namespace $ipaddress_name"
     fi
 done
+
+# Delete all capv-x pods
+kubectl get po -A | grep cap | while read line; do kubectl delete po -n $(echo $line | awk '{print $1}') $(echo $line | awk '{print $2}'); done
+
+
+
+
